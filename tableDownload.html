@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+<body>
+
+    
+        <table id="table_data">
+            <thead>
+                <tr>
+                    <th>TH</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>TD</td>
+                </tr>
+            </tbody>
+        </table>
+    
+    <button id = "download" type = "button">download</button>
+
+    <script>
+        $('#download').click(function(){
+            // #tbl 테이블의 데이터를 csv로 다운로드
+            downloadCsv(document.getElementById('table_data'), "TitleCSV"); // "TitleCSV => 파일 제목"
+        });
+
+        // 지정한 <table>의 데이터를 csv로 다운로드
+        function downloadCsv(tbl, filename)
+        {
+            let csvString = '';
+
+            // header
+            const header = [];
+            tbl.querySelectorAll('thead th').forEach((th)=>{
+                header.push(`"${th.innerText}"`);
+            });
+            csvString += header.join(',') + "\n";
+
+            // body
+            tbl.querySelectorAll('tbody tr').forEach((tr)=>{
+                const rowData = [];
+                tr.querySelectorAll('td').forEach((td)=>{
+                    rowData.push(`"${td.innerText}"`);
+                });
+
+                csvString += rowData.join(',') + "\n"; // ','로 구분
+            });
+            csvString = csvString.trim();
+
+            // download csv
+            const blob = new Blob(["\ufeff" + csvString], {type: 'text/csv;charset=utf-8'});
+            const csvUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('style', 'display:none');
+            a.setAttribute('href', csvUrl);
+            a.setAttribute('download', filename);
+            document.body.appendChild(a);
+
+            a.click();
+            a.remove();
+        }
+
+    </script>
+</body>
+</html>
